@@ -40,6 +40,9 @@ if(isset($_POST['intent']) && isset($_POST['action']) ){
 			
 			login($username,$id_number);
 		}
+		if($intent == "fetch_problems"){
+			fetch_problems();
+		}
 	}
 	
 }else{ echo "Can not determine your intentions"; } 
@@ -97,8 +100,32 @@ function reportProblem ( $desc, $tags, $media, $reporter, $latitude, $longitude 
 		$dbutils->insert_records($table, $columns, $records,true);
 	}
 }
-function print_problem($problem,$tags,$poster,$location,$time){
-	echo '<div class="halign-wrapper hoverable card" style="width:700px;padding:10px; margin:10px">
+
+function fetch_problems(){
+	
+	$dbutils = new db_utils();
+	$table = "problems";
+	 $columns= array();
+	  $records = array();
+	  
+	$problems = $dbutils->query($table, $columns, $records);
+	for($i = 0;$i < count($problems); $i++){
+		$id_problem = $problems[$i]["id_problem"];
+		$tags= $problems[$i]["problem_title"]; 
+		$problem = $problems[$i]["problem_desc"];
+		$id_media = $problems[$i]["id_media"];
+		$id_reporter= $problems[$i]["id_reporter"];
+		$latitude= $problems[$i]["latitude"];
+		$longitude= $problems[$i]["longitude"];
+		$commit_time = $problems[$i]["commit_time"];
+		
+		$poster = get_problem_reporter($id_reporter);
+		print_problem($problem,$tags,$poster,$latitude,$longitude,$commit_time);
+	}
+}
+function print_problem($problem,$tags,$poster,$latitude,$longitude,$time){
+	$location = "{".$latitude.",".$longitude."}";
+	echo '<div id="div_problem_info" onclick="loadMap('.$latitude.','.$longitude.');" class="halign-wrapper hoverable card" style="width:700px;padding:10px; margin:10px">
 			<h6 ><span  class="right-align " style="color:#eeeeee">' . $location . '</span>
 			<span class="right " style="color:#00b8d4">' . $time . '</span></h6>
 			<h5 style="color:#4acaa8;"><span style="font-size:18px;">' . $problem . '</span></h5>
@@ -106,5 +133,18 @@ function print_problem($problem,$tags,$poster,$location,$time){
 				<span class="left" style="color:#4dd0e1">' . $tags . '</span>
 				<span class="right" style="color:#00897b">' . $poster . '</span>
 			</div></div>';
+}
+
+function get_problem_reporter($id_reporter) {
+	$dbutils = new db_utils ();
+	$table = "reporters";
+	$columns = array ("id_reporter");
+	$records = array ($id_reporter);
+	$reporters = $dbutils->query ( $table, $columns, $records );
+	if (count ( $reporters ) > 0) {
+		return $reporters [0] ['full_name'];
+	} else {
+		return "Anonymous";
+	}
 }
 ?>

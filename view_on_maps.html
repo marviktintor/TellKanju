@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDi89-cQchaasqaSomPyk0DDISJE_oXFA">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+    	  
+    	  latitude = localStorage.getItem("map_latitude");
+    	  longitude = localStorage.getItem("map_longitude");
+    	      	  
+    	      	  
+    	  latitude = latitude.substring(0, latitude.indexOf(".", 0) + 4);
+    	  longitude = longitude.substring(0, longitude.indexOf(".", 0) + 4);
+    	  
+    	  latitude++;
+    	  longitude++;
+    	  
+        var mapOptions = {
+          center: { lat:latitude, lng:longitude},
+          zoom: 12
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+<div id="map-canvas"></div>
+  </body>
+</html>
