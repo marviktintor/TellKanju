@@ -5,7 +5,7 @@ METHOD_POST = "POST";
 METHOD_GET = "GET";
 
 
-URL_WORKER ="http://localhost/tellkanju/worker.php";
+MASTER_URL = "http://localhost/tellkanju/worker.php";
 
 //Actions
 ACTION_QUERY = "query";

@@ -3,7 +3,6 @@
 include 'dbapi/db_utils.php';
 
 
-
 if(isset($_POST['intent']) && isset($_POST['action']) ){
 	
 	$action = $_POST['action'];
@@ -19,6 +18,20 @@ if(isset($_POST['intent']) && isset($_POST['action']) ){
 			
 			signup($fullname,$id_number,$phonenumber,$email);
 		}
+		if($intent == "report_problem"){
+				
+			$tags = $_POST ['tags'];
+			$desc = $_POST ['desc'];
+			
+			$media = 1; // $_POST['media'];
+			$reporter = 1;
+			$latitude = $_POST ['latitude'];
+			$longitude = $_POST ['longitude'];
+			
+			reportProblem ( $desc, $tags, $media, $reporter, $latitude, $longitude );
+		}
+		
+		
 	}
 	if($action == "query"){
 		if($intent == "login"){
@@ -72,6 +85,18 @@ function login($username,$id_number){
 	
 }
 
+
+function reportProblem ( $desc, $tags, $media, $reporter, $latitude, $longitude ){
+	$dbutils = new db_utils();
+	
+	$table = "problems";
+	$columns = array("problem_title", "problem_desc", "id_media", "id_reporter", "latitude", "longitude");
+	$records = array($tags,$desc,$media, "1", $latitude, $longitude);
+	
+	if($dbutils->is_exists($table, $columns, $records) == 0){ 
+		$dbutils->insert_records($table, $columns, $records,true);
+	}
+}
 function print_problem($problem,$tags,$poster,$location,$time){
 	echo '<div class="halign-wrapper hoverable card" style="width:700px;padding:10px; margin:10px">
 			<h6 ><span  class="right-align " style="color:#eeeeee">' . $location . '</span>
